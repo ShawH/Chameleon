@@ -557,6 +557,52 @@
             [self setGradientImage:backgroundColorImage];
             return [UIColor colorWithPatternImage:backgroundColorImage];
         }
+            
+        case UIGradientStyleLeftBottomToRightTop:
+        {
+            
+            UIGraphicsBeginImageContextWithOptions(frame.size,NO, [UIScreen mainScreen].scale);
+            
+            CGFloat locations[4] = {0.0, 0.3, 0.6, 1.0};
+            
+            CGColorSpaceRef myColorspace = CGColorSpaceCreateDeviceRGB();
+            CFArrayRef arrayRef = (__bridge CFArrayRef)cgColors;
+            
+            CGGradientRef myGradient = CGGradientCreateWithColors(myColorspace, arrayRef, locations);
+            
+            CGContextDrawRadialGradient (UIGraphicsGetCurrentContext(), myGradient, CGPointMake(-50.f, frame.size.height + 50.f),
+                                         0, CGPointMake(-50.f, frame.size.height + 50.f),
+                                         sqrt((frame.size.width + 50.f) * (frame.size.width+ 50.f) + (frame.size.height+ 50.f) * (frame.size.height+ 50.f)),
+                                         kCGGradientDrawsAfterEndLocation);
+            
+            UIImage *backgroundColorImage = UIGraphicsGetImageFromCurrentImageContext();
+            
+            CGColorSpaceRelease(myColorspace); // Necessary?
+            CGGradientRelease(myGradient); // Necessary?
+            UIGraphicsEndImageContext();
+            
+            [self setGradientImage:backgroundColorImage];
+            return [UIColor colorWithPatternImage:backgroundColorImage];
+        }
+            
+        case UIGradientStyleLeftTopToRightBottom:
+        {
+            //Set out gradient's colors
+            backgroundGradientLayer.colors = cgColors;
+            
+            //Specify the direction our gradient will take
+            [backgroundGradientLayer setStartPoint:CGPointMake(1.0, 0.0)];
+            [backgroundGradientLayer setEndPoint:CGPointMake(0.0, 1.0)];
+            
+            //Convert our CALayer to a UIImage object
+            UIGraphicsBeginImageContextWithOptions(backgroundGradientLayer.bounds.size,NO, [UIScreen mainScreen].scale);
+            [backgroundGradientLayer renderInContext:UIGraphicsGetCurrentContext()];
+            UIImage *backgroundColorImage = UIGraphicsGetImageFromCurrentImageContext();
+            UIGraphicsEndImageContext();
+            
+            [self setGradientImage:backgroundColorImage];
+            return [UIColor colorWithPatternImage:backgroundColorImage];
+        }
 
         case UIGradientStyleTopToBottom:
         default: {
